@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
 import Storage from '@flamelink/sdk-storage-types';
 import App from '@flamelink/sdk-app-types';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,7 @@ export class FLStorage {
 
     constructor(
         private flamelink: FLApp,
+        public fireStorage: AngularFireStorage
     ) { }
 
     public get UploadEvents() {

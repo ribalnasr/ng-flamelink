@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FLContent, FLExtend } from 'ng-flamelink';
+import { FLExtend } from 'ng-flamelink';
+import { FLContent } from 'ng-flamelink/content';
+import { FLUsers } from 'ng-flamelink/users';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +12,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private content: FLContent,
+    private users: FLUsers,
     private extend: FLExtend
   ) { }
 
@@ -19,8 +22,7 @@ export class AppComponent implements OnInit {
       console.log(log);
     })
 
-    this.content.get({ schemaKey: 'ideas' }).then((res) => console.log(res));
-
+    this.users.fireAuth.user.subscribe(res => console.log(res));
   }
 
 }

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FLNavigation } from './navigation.service';
+import { FLNavigation } from '../navigation.service';
 import 'flamelink/navigation';
 
 

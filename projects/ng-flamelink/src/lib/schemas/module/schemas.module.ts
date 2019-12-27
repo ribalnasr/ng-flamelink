@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FLSchemas } from './schemas.service';
+import { FLSchemas } from '../schemas.service';
 import 'flamelink/schemas';
 
 

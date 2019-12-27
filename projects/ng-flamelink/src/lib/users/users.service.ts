@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
 import { FLExtend } from 'ng-flamelink/extend.service';
 import Users from '@flamelink/sdk-users-types';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Injectable({
     providedIn: 'root'
@@ -11,6 +12,7 @@ export class FLUsers {
     constructor(
         private flamelink: FLApp,
         private extend: FLExtend,
+        public fireAuth: AngularFireAuth
     ) { }
 
     public _getPermissionsRef(permission?: string) {

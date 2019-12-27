@@ -1,14 +1,18 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { FirebaseOptions, FirebaseOptionsToken } from '@angular/fire';
+import { FirebaseOptions, FirebaseOptionsToken, AngularFireModule } from '@angular/fire';
 import { FLApp } from './app.service';
 import flamelink from 'flamelink/app';
 import firebase from 'firebase/app';
 import { FLExtend } from './extend.service';
-import 'firebase/firestore';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
   providers: [
     FLExtend
+  ],
+  imports: [
+    AngularFireModule,
+    AngularFirestoreModule
   ]
 })
 export class FlamelinkModule {
