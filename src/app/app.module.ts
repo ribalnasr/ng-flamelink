@@ -13,7 +13,7 @@ import { FLUsersModule } from 'ng-flamelink/users/module';
   ],
   imports: [
     BrowserModule,
-    FlamelinkModule.forRoot({
+    FlamelinkModule.initialize({
       firebaseApp: environment.firebase,
       dbType: 'cf'
     }),

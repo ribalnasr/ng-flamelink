@@ -16,7 +16,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
   ]
 })
 export class FlamelinkModule {
-  static forRoot(options: FLConfig): ModuleWithProviders {
+  static initialize(options: FLConfig): ModuleWithProviders {
     return {
       ngModule: FlamelinkModule,
       providers: [
