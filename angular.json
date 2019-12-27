@@ -124,6 +124,41 @@
           }
         }
       }
+    },
+    "ng-flamelink": {
+      "projectType": "library",
+      "root": "projects/ng-flamelink",
+      "sourceRoot": "projects/ng-flamelink/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ng-flamelink/tsconfig.lib.json",
+            "project": "projects/ng-flamelink/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ng-flamelink/src/test.ts",
+            "tsConfig": "projects/ng-flamelink/tsconfig.spec.json",
+            "karmaConfig": "projects/ng-flamelink/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ng-flamelink/tsconfig.lib.json",
+              "projects/ng-flamelink/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }},
   "defaultProject": "ng-flamelink-workspace"
 }

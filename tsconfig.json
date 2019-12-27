@@ -17,7 +17,16 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ng-flamelink": [
+        "projects/ng-flamelink/src/public-api"
+      ],
+      "ng-flamelink/*": [
+        "projects/ng-flamelink/src/lib/*"
+      ]
+    },
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
