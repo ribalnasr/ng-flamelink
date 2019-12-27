@@ -4,6 +4,7 @@ import Content from '@flamelink/sdk-content-types';
 import App from '@flamelink/sdk-app-types';
 import { FLExtend } from '../extend.service';
 import { Observable } from 'rxjs';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 interface Subscribe extends Content.CF.Get {
     changeType?: string
@@ -17,7 +18,8 @@ export class FLContent {
 
     constructor(
         private flamelink: FLApp,
-        private extend: FLExtend
+        private extend: FLExtend,
+        public firestore: AngularFirestore
     ) { }
 
     public ref(reference?: string | string[], options?: App.CF.Options | App.RTDB.Options) {
@@ -94,7 +96,7 @@ export class FLContent {
         return res;
     }
 
-    public subscribe<T>(options: Subscribe | Content.RTDB.Get) {
+    public valueChanges<T>(options: Subscribe | Content.RTDB.Get) {
         return new Observable<T>(o => {
             this.flamelink.content.subscribe({
                 ...options,
@@ -114,7 +116,7 @@ export class FLContent {
         })
     }
 
-    public subscribeRaw<T>(options: Subscribe | Content.RTDB.Get) {
+    public valueChangesRaw<T>(options: Subscribe | Content.RTDB.Get) {
         return new Observable<T>(o => {
             this.flamelink.content.subscribeRaw({
                 ...options,
