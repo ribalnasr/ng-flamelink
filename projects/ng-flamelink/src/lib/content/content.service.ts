@@ -6,7 +6,7 @@ import { FLExtend } from '../extend.service';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 
-interface Subscribe extends Content.CF.Get {
+interface ContentSubscribe extends Content.CF.Get {
     changeType?: string
     // Removed mandatory callback from Content.CF.Subscribe
 }
@@ -96,7 +96,7 @@ export class FLContent {
         return res;
     }
 
-    public valueChanges<T>(options: Subscribe | Content.RTDB.Get) {
+    public valueChanges<T>(options: ContentSubscribe | Content.RTDB.Get) {
         return new Observable<T>(o => {
             this.flamelink.content.subscribe({
                 ...options,
@@ -116,7 +116,7 @@ export class FLContent {
         })
     }
 
-    public valueChangesRaw<T>(options: Subscribe | Content.RTDB.Get) {
+    public valueChangesRaw<T>(options: ContentSubscribe | Content.RTDB.Get) {
         return new Observable<T>(o => {
             this.flamelink.content.subscribeRaw({
                 ...options,
