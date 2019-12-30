@@ -4,6 +4,7 @@ import { FLExtend } from '../extend.service';
 import Users from '@flamelink/sdk-users-types';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 interface UsersSubscribe extends Users.CF.Get {
     changeType?: string
@@ -18,6 +19,7 @@ export class FLUsers {
     constructor(
         private flamelink: FLApp,
         private extend: FLExtend,
+        public firestore: AngularFirestore,
         public fireAuth: AngularFireAuth
     ) { }
 
@@ -25,8 +27,8 @@ export class FLUsers {
         return this.flamelink.users._getPermissionsRef(permission);
     }
 
-    public ref(uid?: string) {
-        return this.flamelink.users.ref(uid);
+    public ref(uid: string) {
+        return this.firestore.collection('fl_users').doc(uid).ref;
     }
 
     public async add<T>(options: Users.CF.Add | Users.RTDB.Add) {

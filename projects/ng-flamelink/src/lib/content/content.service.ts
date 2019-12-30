@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
 import Content from '@flamelink/sdk-content-types';
-import App from '@flamelink/sdk-app-types';
 import { FLExtend } from '../extend.service';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
+
 
 interface ContentSubscribe extends Content.CF.Get {
     changeType?: string
@@ -22,8 +22,8 @@ export class FLContent {
         public firestore: AngularFirestore
     ) { }
 
-    public ref(reference?: string | string[], options?: App.CF.Options | App.RTDB.Options) {
-        return this.flamelink.content.ref(reference, options);
+    public ref(id: string) {
+        return this.firestore.collection('fl_content').doc(id).ref;
     }
 
     public async add<T>(options: Content.CF.Add | Content.RTDB.Add) {
@@ -105,7 +105,20 @@ export class FLContent {
                         o.error(err);
                         return;
                     }
-                    o.next(res);
+
+                    let single = !!options.entryId;
+                    if (res && res._fl_meta_) {
+                        if (res._fl_meta_.schemaType === 'single') {
+                            single = true;
+                        }
+                    }
+
+                    let data = single ? null : [] as any as T;
+                    if (res) {
+                        data = single ? res : Object.keys(res).map(i => res[i]);
+                    }
+
+                    o.next(data);
                     this.extend.log({
                         action: 'CONTENT.READ',
                         payload: options,
@@ -125,7 +138,20 @@ export class FLContent {
                         o.error(err);
                         return;
                     }
-                    o.next(res);
+
+                    let single = !!options.entryId;
+                    if (res && res._fl_meta_) {
+                        if (res._fl_meta_.schemaType === 'single') {
+                            single = true;
+                        }
+                    }
+
+                    let data = single ? null : [] as any as T;
+                    if (res) {
+                        data = single ? res : Object.keys(res).map(i => res[i]);
+                    }
+
+                    o.next(data);
                     this.extend.log({
                         action: 'CONTENT.READ',
                         payload: options,
