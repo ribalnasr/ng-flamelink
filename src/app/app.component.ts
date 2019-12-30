@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FLExtend } from 'ng-flamelink';
-import { FLContent } from 'ng-flamelink/content';
-import { FLUsers } from 'ng-flamelink/users';
+import { FLExtend, FLUsers } from 'ng-flamelink';
+// import { FLContent } from 'ng-flamelink/content';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +10,7 @@ import { FLUsers } from 'ng-flamelink/users';
 export class AppComponent implements OnInit {
 
   constructor(
-    private content: FLContent,
+    // private content: FLContent,
     private users: FLUsers,
     private extend: FLExtend
   ) { }
