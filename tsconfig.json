@@ -20,13 +20,9 @@
     ],
     "paths": {
       "ng-flamelink": [
-        "projects/ng-flamelink/src/public-api"
+        "dist/ng-flamelink"
       ],
-      "ng-flamelink/*": [
-        "projects/ng-flamelink/src/lib/*"
-      ]
     },
-    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

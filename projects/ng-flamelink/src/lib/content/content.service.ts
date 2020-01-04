@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
-import Content from '@flamelink/sdk-content-types';
+import * as Content from '@flamelink/sdk-content-types';
 import { FLExtend } from '../extend.service';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';

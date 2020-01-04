@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
 import { FLExtend } from '../extend.service';
-import Users from '@flamelink/sdk-users-types';
+import * as Users from '@flamelink/sdk-users-types';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';

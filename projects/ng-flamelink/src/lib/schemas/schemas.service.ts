@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
-import Schemas from '@flamelink/sdk-schemas-types';
+import * as Schemas from '@flamelink/sdk-schemas-types';
 
 @Injectable({
     providedIn: 'root'

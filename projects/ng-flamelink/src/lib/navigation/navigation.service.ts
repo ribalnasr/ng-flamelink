@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
-import Navigation from '@flamelink/sdk-navigation-types';
+import * as Navigation from '@flamelink/sdk-navigation-types';
 
 @Injectable({
     providedIn: 'root'

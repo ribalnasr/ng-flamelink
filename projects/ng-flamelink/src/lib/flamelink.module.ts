@@ -1,14 +1,15 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders, InjectionToken } from '@angular/core';
 import { FirebaseOptions, FirebaseOptionsToken, AngularFireModule } from '@angular/fire';
 import { FLApp } from './app.service';
-import flamelink from 'flamelink/app';
-import firebase from 'firebase/app';
 import { FLExtend } from './extend.service';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { FLConfig, Config } from './config.service';
+export const FL_CONFIG_TOKEN = new InjectionToken<Config>("forRoot() MyService configuration.");
 
 @NgModule({
   providers: [
-    FLExtend
+    FLExtend,
+    FLApp
   ],
   imports: [
     AngularFireModule,
@@ -16,31 +17,22 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
   ]
 })
 export class FlamelinkModule {
-  static initialize(options: FLConfig): ModuleWithProviders {
+  static initialize(options: Config): ModuleWithProviders {
+
     return {
       ngModule: FlamelinkModule,
       providers: [
         { provide: FirebaseOptionsToken, useValue: options.firebaseApp },
-        { provide: FLApp, useFactory: FLAppFactory(options) }
+        { provide: FL_CONFIG_TOKEN, useValue: options },
+        { provide: FLConfig, useFactory: flConfigFactory, deps: [FL_CONFIG_TOKEN] },
       ]
     };
   }
 }
 
-const FLAppFactory = (config: FLConfig) => () => {
-  const service = new FLApp();
-  service.init(flamelink({
-    ...config,
-    firebaseApp: firebase.initializeApp(config.firebaseApp),
-  }));
-  return service;
-};
-
-
-export interface FLConfig extends flamelink.app.Config {
-  firebaseApp: FirebaseOptions;
-  env?: string;
-  locale?: string;
-  dbType?: 'rtdb' | 'cf';
-  precache?: boolean | { schemas?: string[] };
+export function flConfigFactory(options: Config): FLConfig {
+  const config = new FLConfig();
+  config.set(options)
+  return config;
 }
+

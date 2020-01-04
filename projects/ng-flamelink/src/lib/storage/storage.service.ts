@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
-import Storage from '@flamelink/sdk-storage-types';
-import App from '@flamelink/sdk-app-types';
+import * as Storage from '@flamelink/sdk-storage-types';
+import * as App from '@flamelink/sdk-app-types';
 import { AngularFireStorage } from '@angular/fire/storage';
 
 @Injectable({

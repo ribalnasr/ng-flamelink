@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FLContent } from '../content.service';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { FLContent } from './content.service';
 import 'flamelink/content';
 
 @NgModule({

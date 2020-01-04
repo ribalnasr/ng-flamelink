@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
-import Settings from '@flamelink/sdk-settings-types';
+import * as Settings from '@flamelink/sdk-settings-types';
 
 @Injectable({
     providedIn: 'root'

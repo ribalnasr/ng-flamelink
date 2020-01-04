@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import flamelink from 'flamelink/app';
+import * as _flamelink from 'flamelink/app';
+import * as firebase from 'firebase/app';
+import { FLConfig } from './config.service';
 
+const flamelink = _flamelink && _flamelink['default'] || _flamelink;
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +12,18 @@ export class FLApp {
 
   private app: flamelink.app.App;
 
-  public init(app: flamelink.app.App) {
-    this.app = app;
+  constructor(
+    private config: FLConfig,
+  ) {
+    this.app = flamelink({
+      ...this.config.get(),
+      firebaseApp: firebase.initializeApp(this.config.get().firebaseApp),
+    });
   }
 
   public get content() {
     return this.app.content;
+
   }
 
   public get storage() {

@@ -3,9 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
-import { FlamelinkModule, FLUsersModule } from 'ng-flamelink';
-// import { FLContentModule } from 'ng-flamelink/content/module';
-// import { FLUsersModule } from 'ng-flamelink/users/module';
+import { FlamelinkModule, FLUsersModule, FLContentModule } from 'ng-flamelink';
 
 @NgModule({
   declarations: [
@@ -17,7 +15,7 @@ import { FlamelinkModule, FLUsersModule } from 'ng-flamelink';
       firebaseApp: environment.firebase,
       dbType: 'cf'
     }),
-    // FLContentModule,
+    FLContentModule,
     FLUsersModule,
   ],
   providers: [],

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FLExtend, FLUsers } from 'ng-flamelink';
-// import { FLContent } from 'ng-flamelink/content';
+import { FLExtend, FLUsers, FLContent } from 'ng-flamelink';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +9,7 @@ import { FLExtend, FLUsers } from 'ng-flamelink';
 export class AppComponent implements OnInit {
 
   constructor(
-    // private content: FLContent,
+    private content: FLContent,
     private users: FLUsers,
     private extend: FLExtend
   ) { }
@@ -19,6 +18,10 @@ export class AppComponent implements OnInit {
 
     this.extend.onLog.subscribe(log => {
       console.log(log);
+    })
+
+    this.content.firestore.collection('fl_content', q => q.where('_fl_meta_.schema', '==', 'history')).valueChanges().subscribe(res => {
+      console.log(res);
     })
 
     this.users.fireAuth.user.subscribe(res => console.log(res));
