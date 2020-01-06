@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders, InjectionToken } from '@angular/core';
-import { FirebaseOptions, FirebaseOptionsToken, AngularFireModule } from '@angular/fire';
+import { FirebaseOptionsToken, AngularFireModule } from '@angular/fire';
 import { FLApp } from './app.service';
 import { FLExtend } from './extend.service';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
