@@ -152,12 +152,12 @@ returns a Firestore DocumentReference for the user.
 
 ##### Note:
 
-If needed, The AngularFirestore service could be accessed from within the FLContent service as below:
+If needed, The AngularFireAuth service could be accessed from within the FLUsers service as below:
 ```
 	constructor(
-		private content: FLContent
+		private users: FLUsers
 	) { 
-		const contentCollection = this.content.firestore.collection('fl_content');
+		this.users.fireAuth.auth.signInWithEmailAndPassword('name@email.com', 'password');
 	}
 ```
 
