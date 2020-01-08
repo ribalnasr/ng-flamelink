@@ -1,6 +1,6 @@
 {
   "name": "ng-flamelink",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "peerDependencies": {
     "@angular/common": ">=8.2.0",
     "@angular/core": ">=8.2.0"
