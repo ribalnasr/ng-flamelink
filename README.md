@@ -6,7 +6,7 @@ Angular wrapper modules for Flamelink SDK.
 
 Run `npm i -s firebase flamelink@next @angular/fire ng-flamelink`. 
 
-Then, import Flamelink and AngularFire in your app.module.ts:
+Then, import FlamelinkModule in your app.module.ts:
 
 ```
 ...
