@@ -10,7 +10,7 @@ import { FlamelinkModule, FLUsersModule, FLContentModule } from 'ng-flamelink';
     AppComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     FlamelinkModule.initialize({
       firebaseApp: environment.firebase,
       dbType: 'cf'
