@@ -20,7 +20,7 @@
     ],
     "paths": {
       "ng-flamelink": [
-        "dist/ng-flamelink"
+        "projects/ng-flamelink/src/public-api"
       ],
     },
   },

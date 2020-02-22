@@ -17,7 +17,7 @@ export const FL_CONFIG_TOKEN = new InjectionToken<Config>("forRoot() MyService c
   ]
 })
 export class FlamelinkModule {
-  static initialize(options: Config): ModuleWithProviders {
+  static initialize(options: Config): ModuleWithProviders<FlamelinkModule> {
 
     return {
       ngModule: FlamelinkModule,
