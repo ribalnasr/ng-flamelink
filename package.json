@@ -31,7 +31,7 @@
     "express": "^4.15.2",
     "firebase": "^7.9.1",
     "flamelink": "^1.0.0-alpha.27",
-    "rxjs": "~6.5.4",
+    "rxjs": "~6.5.5",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.3"
   },
