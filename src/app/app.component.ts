@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.content.valueChanges({ schemaKey: 'ideas' }).subscribe(res => console.log(res));
+    this.content.valueChanges({ schemaKey: 'articles' }).subscribe(res => console.log(res));
     this.users.fireAuth.user.subscribe(res => console.log(res));
   }
 

@@ -127,7 +127,10 @@
           "options": {
             "outputPath": "dist/ng-flamelink-workspace/server",
             "main": "server.ts",
-            "tsConfig": "tsconfig.server.json"
+            "tsConfig": "tsconfig.server.json",
+            "externalDependencies": [
+              "@firebase/firestore"
+            ]
           },
           "configurations": {
             "production": {
