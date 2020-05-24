@@ -20,9 +20,10 @@
     ],
     "paths": {
       "ng-flamelink": [
-        "dist/ng-flamelink/public-api"
-      ],
-    },
+        "dist/ng-flamelink/ng-flamelink",
+        "dist/ng-flamelink"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

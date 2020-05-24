@@ -1,11 +1,11 @@
 import { NgModule, ModuleWithProviders, InjectionToken } from '@angular/core';
+import 'firebase/firestore';
 import { FIREBASE_OPTIONS, AngularFireModule } from '@angular/fire';
 import { FLApp } from './app.service';
 import { FLExtend } from './extend.service';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { FLConfig, Config } from './config.service';
 export const FL_CONFIG_TOKEN = new InjectionToken<Config>("initialize()");
-import 'firebase/firestore';
 
 @NgModule({
   providers: [

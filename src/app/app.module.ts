@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import 'firebase/firestore';
 
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
