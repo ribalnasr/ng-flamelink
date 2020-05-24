@@ -1,11 +1,11 @@
 {
   "name": "ng-flamelink",
-  "version": "1.0.17",
+  "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": ">=8.2.0",
-    "@angular/core": ">=8.2.0",
-    "firebase": "^7.6.1",
-    "flamelink": "^1.0.0-alpha.27",
-    "@angular/fire": ">=6.0.0-rc.1"
+    "@angular/common": "^9.1.9",
+    "@angular/core": "^9.1.9"
+  },
+  "dependencies": {
+    "tslib": "^1.10.0"
   }
 }

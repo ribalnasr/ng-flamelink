@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "fireplace-public"
+  },
+  "targets": {
+    "fireplace-public": {
+      "hosting": {
+        "tests": [
+          "fireplace-public"
+        ]
+      }
+    }
+  }
+}

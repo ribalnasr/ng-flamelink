@@ -1,10 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import 'firebase/firestore';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
 import { environment } from '../environments/environment';
-import { FlamelinkModule, FLUsersModule, FLContentModule } from 'ng-flamelink';
+import { FlamelinkModule, FLContentModule } from 'ng-flamelink';
 
 @NgModule({
   declarations: [
@@ -12,12 +13,12 @@ import { FlamelinkModule, FLUsersModule, FLContentModule } from 'ng-flamelink';
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    AppRoutingModule,
     FlamelinkModule.initialize({
       firebaseApp: environment.firebase,
       dbType: 'cf'
     }),
-    FLContentModule,
-    FLUsersModule,
+    FLContentModule
   ],
   providers: [],
   bootstrap: [AppComponent]
