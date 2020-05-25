@@ -3,6 +3,7 @@
  */
 
 export * from './lib/flamelink.module';
+export * from './lib/app.service';
 export * from './lib/extend.service';
 
 export * from './lib/content/content.service';

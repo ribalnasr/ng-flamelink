@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import { FLExtend } from '../extend.service';
 import * as Users from '@flamelink/sdk-users-types';
@@ -17,6 +17,7 @@ interface UsersSubscribe extends Users.CF.Get {
 export class FLUsers {
 
     constructor(
+        private zone: NgZone,
         private flamelink: FLApp,
         private extend: FLExtend,
         public firestore: AngularFirestore,
@@ -83,40 +84,49 @@ export class FLUsers {
 
     public valueChanges<T>(options: UsersSubscribe | Users.RTDB.Get) {
         return new Observable<T>(o => {
-            this.flamelink.users.subscribe({
-                ...options,
-                callback: async (err, res) => {
-                    if (err) {
-                        o.error(err);
-                        return;
+            this.zone.runOutsideAngular(() => {
+                this.flamelink.users.subscribe({
+                    ...options,
+                    callback: async (err, res) => {
+                        if (err) {
+                            o.error(err);
+                            return;
+                        }
+                        this.zone.runTask(() => {
+                            o.next(res);
+                            this.extend.log({
+                                action: 'USERS.READ',
+                                payload: options,
+                                result: res
+                            });
+
+                        })
                     }
-                    o.next(res);
-                    this.extend.log({
-                        action: 'USERS.READ',
-                        payload: options,
-                        result: res
-                    });
-                }
+                });
             });
-        })
+        });
     }
 
     public valueChangesRaw<T>(options: UsersSubscribe | Users.RTDB.Get) {
         return new Observable<T>(o => {
-            this.flamelink.users.subscribeRaw({
-                ...options,
-                callback: async (err, res) => {
-                    if (err) {
-                        o.error(err);
-                        return;
+            this.zone.runOutsideAngular(() => {
+                this.flamelink.users.subscribeRaw({
+                    ...options,
+                    callback: async (err, res) => {
+                        if (err) {
+                            o.error(err);
+                            return;
+                        }
+                        this.zone.runTask(() => {
+                            o.next(res);
+                            this.extend.log({
+                                action: 'USERS.READ',
+                                payload: options,
+                                result: res
+                            });
+                        })
                     }
-                    o.next(res);
-                    this.extend.log({
-                        action: 'USERS.READ',
-                        payload: options,
-                        result: res
-                    });
-                }
+                });
             });
         })
     }

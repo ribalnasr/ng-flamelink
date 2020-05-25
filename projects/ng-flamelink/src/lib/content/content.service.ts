@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Content from '@flamelink/sdk-content-types';
 import { FLExtend } from '../extend.service';
@@ -17,10 +17,28 @@ interface ContentSubscribe extends Content.CF.Get {
 export class FLContent {
 
     constructor(
+        private zone: NgZone,
         private flamelink: FLApp,
         private extend: FLExtend,
         public firestore: AngularFirestore
     ) { }
+
+    private objectToArray<T extends any>(entries: T, options: Content.CF.Get) {
+        let single = !!options.entryId;
+        if (entries && entries._fl_meta_) {
+            if (entries._fl_meta_.schemaType === 'single') {
+                single = true;
+            }
+        }
+
+        let data: any = single ? null : [];
+        if (entries) {
+            data = single ? entries : Object.keys(entries).map(i => entries[i]);
+        }
+
+        return data as T;
+
+    }
 
     public ref(id: string) {
         return this.firestore.collection('fl_content').doc(id).ref;
@@ -43,7 +61,7 @@ export class FLContent {
             payload: options,
             result: res
         });
-        return res;
+        return this.objectToArray(res, options);
     }
 
     public async getRaw<T>(options: Content.CF.Get | Content.RTDB.Get) {
@@ -98,66 +116,63 @@ export class FLContent {
 
     public valueChanges<T>(options: ContentSubscribe | Content.RTDB.Get) {
         return new Observable<T>(o => {
-            this.flamelink.content.subscribe({
-                ...options,
-                callback: async (err, res) => {
-                    if (err) {
-                        o.error(err);
-                        return;
-                    }
-
-                    let single = !!options.entryId;
-                    if (res && res._fl_meta_) {
-                        if (res._fl_meta_.schemaType === 'single') {
-                            single = true;
+            this.zone.runOutsideAngular(() => {
+                this.flamelink.content.subscribe({
+                    ...options,
+                    callback: async (err, res) => {
+                        if (err) {
+                            o.error(err);
+                            return;
                         }
-                    }
 
-                    let data = single ? null : [] as any as T;
-                    if (res) {
-                        data = single ? res : Object.keys(res).map(i => res[i]);
+                        const data = this.objectToArray<T>(res, options);
+                        this.zone.runTask(() => {
+                            o.next(data);
+                            this.extend.log({
+                                action: 'CONTENT.READ',
+                                payload: options,
+                                result: res
+                            });
+                        })
                     }
-
-                    o.next(data);
-                    this.extend.log({
-                        action: 'CONTENT.READ',
-                        payload: options,
-                        result: res
-                    });
-                }
+                });
             });
         })
     }
 
     public valueChangesRaw<T>(options: ContentSubscribe | Content.RTDB.Get) {
         return new Observable<T>(o => {
-            this.flamelink.content.subscribeRaw({
-                ...options,
-                callback: async (err, res) => {
-                    if (err) {
-                        o.error(err);
-                        return;
-                    }
-
-                    let single = !!options.entryId;
-                    if (res && res._fl_meta_) {
-                        if (res._fl_meta_.schemaType === 'single') {
-                            single = true;
+            this.zone.runOutsideAngular(() => {
+                this.flamelink.content.subscribeRaw({
+                    ...options,
+                    callback: async (err, res) => {
+                        if (err) {
+                            o.error(err);
+                            return;
                         }
-                    }
 
-                    let data = single ? null : [] as any as T;
-                    if (res) {
-                        data = single ? res : Object.keys(res).map(i => res[i]);
-                    }
+                        let single = !!options.entryId;
+                        if (res && res._fl_meta_) {
+                            if (res._fl_meta_.schemaType === 'single') {
+                                single = true;
+                            }
+                        }
 
-                    o.next(data);
-                    this.extend.log({
-                        action: 'CONTENT.READ',
-                        payload: options,
-                        result: res
-                    });
-                }
+                        let data = single ? null : [] as any as T;
+                        if (res) {
+                            data = single ? res : Object.keys(res).map(i => res[i]);
+                        }
+
+                        this.zone.runTask(() => {
+                            o.next(data);
+                            this.extend.log({
+                                action: 'CONTENT.READ',
+                                payload: options,
+                                result: res
+                            });
+                        })
+                    }
+                });
             });
         })
     }

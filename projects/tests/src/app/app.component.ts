@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { FLContent } from 'ng-flamelink';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +10,13 @@ import { FLContent } from 'ng-flamelink';
 export class AppComponent {
   title = 'tests';
 
-  // public content = this.flContent.valueChanges({
-  //   schemaKey: 'articles'
-  // });
-
+  public content = this.flContent.valueChanges({ schemaKey: 'articles' }).pipe(
+    tap(
+      res => console.log(res)
+    )
+  );
   constructor(
-    public flContent: FLContent
+    public flContent: FLContent,
+    public zone: NgZone
   ) { }
 }
