@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Settings from '@flamelink/sdk-settings-types';
 
@@ -8,6 +8,7 @@ import * as Settings from '@flamelink/sdk-settings-types';
 export class FLSettings {
 
     constructor(
+        private zone: NgZone,
         private flamelink: FLApp,
     ) { }
 
@@ -16,11 +17,23 @@ export class FLSettings {
     }
 
     public get(options?: Settings.CF.Get | Settings.RTDB.Get) {
-        return this.flamelink.settings.get(options);
+        return new Promise((resolve, reject) => {
+            this.zone.runOutsideAngular(() => {
+                this.flamelink.settings.get(options)
+                    .then(result => this.zone.runTask(() => resolve(result)))
+                    .catch(error => this.zone.runTask(() => reject(error)));
+            })
+        })
     }
 
     public getAvailableLocales() {
-        return this.flamelink.settings.getAvailableLocales();
+        return new Promise((resolve, reject) => {
+            this.zone.runOutsideAngular(() => {
+                this.flamelink.settings.getAvailableLocales()
+                    .then(result => this.zone.runTask(() => resolve(result)))
+                    .catch(error => this.zone.runTask(() => reject(error)));
+            })
+        })
     }
 
     public getDefaultPermissionsGroup() {
@@ -40,7 +53,13 @@ export class FLSettings {
     }
 
     public getLocale() {
-        return this.flamelink.settings.getLocale();
+        return new Promise((resolve, reject) => {
+            this.zone.runOutsideAngular(() => {
+                this.flamelink.settings.getLocale()
+                    .then(result => this.zone.runTask(() => resolve(result)))
+                    .catch(error => this.zone.runTask(() => reject(error)));
+            })
+        })
     }
 
     public getRaw(options: Settings.CF.Get | Settings.RTDB.Get) {
