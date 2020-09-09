@@ -14,7 +14,7 @@ export class FLSettings {
         private zone: NgZone,
         private flamelink: FLApp,
     ) {
-        this.getLocale().then(locale => this.localeChanges.next(locale))
+        this.localeChanges.next()
     }
 
     public ref(reference: string) {
