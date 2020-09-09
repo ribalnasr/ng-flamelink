@@ -1,16 +1,21 @@
 import { Injectable, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Settings from '@flamelink/sdk-settings-types';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FLSettings {
 
+    public localeChanges = new ReplaySubject<string>();
+
     constructor(
         private zone: NgZone,
         private flamelink: FLApp,
-    ) { }
+    ) {
+        this.getLocale().then(locale => this.localeChanges.next(locale))
+    }
 
     public ref(reference: string) {
         return this.flamelink.settings.ref(reference);
@@ -53,7 +58,7 @@ export class FLSettings {
     }
 
     public getLocale() {
-        return new Promise((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
             this.zone.runOutsideAngular(() => {
                 this.flamelink.settings.getLocale()
                     .then(result => this.zone.runTask(() => resolve(result)))
@@ -70,8 +75,10 @@ export class FLSettings {
         return this.flamelink.settings.setEnvironment(env);
     }
 
-    public setLocale(locale: string) {
-        return this.flamelink.settings.setLocale(locale);
+    public async setLocale(locale: string) {
+        const updatedLocale = await this.flamelink.settings.setLocale(locale);
+        this.localeChanges.next(locale);
+        return updatedLocale;
     }
 
     public subscribe(options?: Settings.CF.Subscribe | Settings.RTDB.Subscribe) {
