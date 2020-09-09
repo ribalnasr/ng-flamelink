@@ -17,8 +17,10 @@
     ],
     "paths": {
       "ng-flamelink": [
-        "dist/ng-flamelink/ng-flamelink",
-        "dist/ng-flamelink"
+        "projects/ng-flamelink/src/public-api"
+      ],
+      "ng-flamelink/*": [
+        "projects/ng-flamelink/src/lib/*"
       ]
     }
   },

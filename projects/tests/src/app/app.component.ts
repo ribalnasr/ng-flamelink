@@ -1,5 +1,5 @@
 import { Component, NgZone } from '@angular/core';
-import { FLContent } from 'ng-flamelink';
+import { FLContent, FLSettings } from 'ng-flamelink';
 import { tap } from 'rxjs/operators';
 
 @Component({
@@ -17,6 +17,21 @@ export class AppComponent {
   );
   constructor(
     public flContent: FLContent,
+    public flSettings: FLSettings,
     public zone: NgZone
   ) { }
+
+  ngOnInit() {
+
+    this.flContent.middlewares = {
+      afterRead: async () => {
+        console.log('afterRead middleware');
+      }
+    }
+
+    setTimeout(() => {
+      console.log(2)
+      this.flSettings.setLocale('ar')
+    }, 1000)
+  }
 }
