@@ -21,7 +21,7 @@ export class FLUsers {
         private flamelink: FLApp,
         private extend: FLExtend,
         public firestore: AngularFirestore,
-        public fireAuth: AngularFireAuth
+        public auth: AngularFireAuth
     ) { }
 
     public _getPermissionsRef(permission?: string) {

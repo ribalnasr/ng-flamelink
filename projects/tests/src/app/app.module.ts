@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { environment } from '../environments/environment';
-import { FlamelinkModule, FLContentModule } from 'ng-flamelink';
+import { FlamelinkModule, FLContentModule, FLUsersModule } from 'ng-flamelink';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,8 @@ import { FlamelinkModule, FLContentModule } from 'ng-flamelink';
       firebaseApp: environment.firebase,
       dbType: 'cf'
     }),
-    FLContentModule
+    FLContentModule,
+    FLUsersModule
   ],
   providers: [],
   bootstrap: [AppComponent]

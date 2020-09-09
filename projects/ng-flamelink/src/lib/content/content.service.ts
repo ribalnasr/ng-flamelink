@@ -1,7 +1,7 @@
 import { Injectable, NgZone, Inject, PLATFORM_ID } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Content from '@flamelink/sdk-content-types';
-import { FLExtend } from '../extend.service';
+import * as App from '@flamelink/sdk-app-types';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Document } from './document.interface';
@@ -14,40 +14,38 @@ interface ContentSubscribe extends Content.CF.Get {
     // Removed mandatory callback from Content.CF.Subscribe
 }
 
-export type MiddlewareName = 'beforeRead' | 'afterRead' | 'beforeCreate' | 'afterCreate' | 'beforeUpdate' | 'afterUpdate' | 'beforeDelete' | 'afterDelete';
+export type ContentMiddlewareName = 'beforeRead' | 'afterRead' | 'beforeCreate' | 'afterCreate' | 'beforeUpdate' | 'afterUpdate' | 'beforeDelete' | 'afterDelete';
 
-export type beforeReadFn = () => any;
-export type afterReadFn = (data: any) => any;
-export type beforeCreateFn = () => any;
-export type afterCreateFn = (data: any) => any;
-export type beforeUpdateFn = () => any;
-export type afterUpdateFn = () => any;
-export type beforeDeleteFn = () => any;
-export type afterDeleteFn = () => any;
+export type OptionsTypes = Content.CF.Get | Content.RTDB.Get | Content.CF.Get | Content.RTDB.Get | Content.CF.Add | Content.RTDB.Add | Content.CF.Add | Content.RTDB.Add | Content.CF.Update | Content.RTDB.Update | Content.CF.Update | Content.RTDB.Update | Content.CF.Remove | Content.RTDB.Remove | Content.CF.Remove | Content.RTDB.Remove;
 
-export interface Middlewares {
-    beforeRead?: beforeReadFn;
-    afterRead?: afterReadFn;
-    beforeCreate?: beforeCreateFn;
-    afterCreate?: afterCreateFn;
-    beforeUpdate?: beforeUpdateFn;
-    afterUpdate?: afterUpdateFn;
-    beforeDelete?: beforeDeleteFn;
-    afterDelete?: afterDeleteFn;
+export type Middleware<OptionsType extends OptionsTypes = OptionsTypes> = (options: OptionsType) => any;
+export type MiddlewareWithData<OptionsType extends OptionsTypes = OptionsTypes, DataType = any> = (options: OptionsType, data: DataType) => any;
+
+export type Middlewares = Partial<Record<ContentMiddlewareName, Middleware | MiddlewareWithData>>;
+
+export interface ContentMiddlewares extends Middlewares {
+    beforeRead?: Middleware<Content.CF.Get | Content.RTDB.Get>;
+    afterRead?: MiddlewareWithData<Content.CF.Get | Content.RTDB.Get>;
+    beforeCreate?: Middleware<Content.CF.Add | Content.RTDB.Add>;
+    afterCreate?: MiddlewareWithData<Content.CF.Add | Content.RTDB.Add>;
+    beforeUpdate?: Middleware<Content.CF.Update | Content.RTDB.Update>;
+    afterUpdate?: Middleware<Content.CF.Update | Content.RTDB.Update>;
+    beforeDelete?: Middleware<Content.CF.Remove | Content.RTDB.Remove>;
+    afterDelete?: Middleware<Content.CF.Remove | Content.RTDB.Remove>;
 }
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class FLContent {
 
-    public middlewares: Middlewares = {};
+    public middlewares: ContentMiddlewares = {};
 
     constructor(
         private zone: NgZone,
         private flamelink: FLApp,
         private settings: FLSettings,
-        private extend: FLExtend,
         public firestore: AngularFirestore,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
@@ -55,6 +53,11 @@ export class FLContent {
     public get isBrowser() {
         return isPlatformBrowser(this.platformId);
     }
+
+    public runMiddleware<Options extends OptionsTypes, DataType = any>(name: ContentMiddlewareName, options: Options, data?: DataType) {
+        const middleware = this.middlewares[name] as MiddlewareWithData<Options> | Middleware<Options>;
+        return Promise.resolve(middleware && middleware(options, data));
+    };
 
     private objectToArray<T extends Document | Document[] = Document[]>(entries: T, options: Content.CF.Get) {
         let single = !!options.entryId;
@@ -70,7 +73,6 @@ export class FLContent {
         }
 
         return data as T;
-
     }
 
     public ref(id: string) {
@@ -78,73 +80,52 @@ export class FLContent {
     }
 
     public async add<T extends Document = Document>(options: Content.CF.Add | Content.RTDB.Add) {
-        const res: T = await this.flamelink.content.add(options);
-        this.extend.log({
-            action: 'CONTENT.CREATE',
-            payload: options,
-            result: res
-        });
-        return res;
+        await this.runMiddleware('beforeCreate', options)
+        const data: T = await this.flamelink.content.add(options);
+        this.runMiddleware('afterCreate', options, data)
+        return data;
     }
 
     public async get<T extends Document | Document[] = Document[]>(options: Content.CF.Get | Content.RTDB.Get) {
-        const res: T = await this.flamelink.content.get(options);
-        this.extend.log({
-            action: 'CONTENT.READ',
-            payload: options,
-            result: res
-        });
-        return this.objectToArray(res, options);
+        await this.runMiddleware('beforeRead', options)
+        const data: T = this.objectToArray(await this.flamelink.content.get(options), options);
+        this.runMiddleware('afterRead', data)
+        return data
     }
 
     public async getRaw<T extends Document | Document[] = Document[]>(options: Content.CF.Get | Content.RTDB.Get) {
-        const res: T = await this.flamelink.content.getRaw(options);
-        this.extend.log({
-            action: 'CONTENT.READ',
-            payload: options,
-            result: res
-        });
-        return res;
+        await this.runMiddleware('beforeRead', options)
+        const data: T = await this.flamelink.content.getRaw(options);
+        this.runMiddleware('afterRead', options, data)
+        return data;
     }
 
     public async getByField<T extends Document | Document[] = Document[]>(options: Content.CF.GetByField | Content.RTDB.GetByField) {
-        const res: T = await this.flamelink.content.getByField(options);
-        this.extend.log({
-            action: 'CONTENT.READ',
-            payload: options,
-            result: res
-        });
-        return res;
+        await this.runMiddleware('beforeRead', options)
+        const data: T = await this.flamelink.content.getByField(options);
+        this.runMiddleware('afterRead', options, data)
+        return data;
     }
 
     public async getByFieldRaw<T extends Document | Document[] = Document[]>(options: Content.CF.GetByField | Content.RTDB.GetByField) {
-        const res: T = await this.flamelink.content.getByFieldRaw(options);
-        this.extend.log({
-            action: 'CONTENT.READ',
-            payload: options,
-            result: res
-        });
-        return res;
+        await this.runMiddleware('beforeRead', options)
+        const data: T = await this.flamelink.content.getByFieldRaw(options);
+        this.runMiddleware('afterRead', options, data)
+        return data;
     }
 
     public async update<T extends Document = Document>(options: Content.CF.Update | Content.RTDB.Update) {
-        const res: T = await this.flamelink.content.update(options);
-        this.extend.log({
-            action: 'CONTENT.UPDATE',
-            payload: options,
-            result: res
-        });
-        return res;
+        await this.runMiddleware('beforeUpdate', options);
+        const data: T = await this.flamelink.content.update(options);
+        this.runMiddleware('afterUpdate', options);
+        return data;
     }
 
     public async remove(options: Content.CF.Remove | Content.RTDB.Remove) {
-        const res = await this.flamelink.content.remove(options);
-        this.extend.log({
-            action: 'CONTENT.DELETE',
-            payload: options,
-            result: res
-        });
-        return res;
+        await this.runMiddleware('beforeDelete', options);
+        const data = await this.flamelink.content.remove(options);
+        this.runMiddleware('afterDelete', options);
+        return data;
     }
 
     public valueChanges<T extends Document | Document[] = Document[]>(options: ContentSubscribe | Content.RTDB.Get) {
@@ -153,7 +134,7 @@ export class FLContent {
                 () => {
                     return new Observable<T>(o => {
                         this.zone.runOutsideAngular(async () => {
-                            await Promise.resolve(this.middlewares?.beforeRead && this.middlewares?.beforeRead())
+                            await this.runMiddleware('beforeRead', options)
                             this.flamelink.content.subscribe({
                                 ...options,
                                 callback: async (err, res) => {
@@ -165,7 +146,7 @@ export class FLContent {
                                     const data = this.objectToArray<T>(res, options);
                                     this.zone.runTask(() => {
                                         o.next(data);
-                                        Promise.resolve(this.middlewares?.afterRead && this.middlewares?.afterRead(data))
+                                        this.runMiddleware('afterRead', options, data);
                                     })
                                 }
                             });
@@ -183,7 +164,8 @@ export class FLContent {
         return this.settings.localeChanges.pipe(
             switchMap(
                 () => new Observable<T>(o => {
-                    this.zone.runOutsideAngular(() => {
+                    this.zone.runOutsideAngular(async () => {
+                        await this.runMiddleware('beforeRead', options)
                         this.flamelink.content.subscribeRaw({
                             ...options,
                             callback: async (err, res) => {
@@ -206,11 +188,7 @@ export class FLContent {
 
                                 this.zone.runTask(() => {
                                     o.next(data);
-                                    this.extend.log({
-                                        action: 'CONTENT.READ',
-                                        payload: options,
-                                        result: res
-                                    });
+                                    this.runMiddleware('afterRead', options, data)
                                 })
                             }
                         });
