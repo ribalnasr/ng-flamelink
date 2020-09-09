@@ -1,17 +1,160 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // This rule allows anyone on the internet to view, edit, and delete
-    // all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // your app will lose access to your Firestore database
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2020, 6, 10);
+ 
+    function isSudo() {
+    	return userPermissions().id == '1';
     }
+
+  	function guestPermissions() {
+      return get(/databases/$(database)/documents/fl_permissions/0).data
+    }  
+
+    function userPermissions(){
+      return get(get(/databases/$(database)/documents/fl_users/$(request.auth.uid)).data.permissions).data
+    }
+
+    function isContentPermitted(schema, action) {
+      return guestPermissions().content.production[schema][action] == true || (request.auth != null && (userPermissions().content.production[schema][action] == true || isSudo()))
+    }
+
+    function isCollectionPermitted(collection, action) {
+      return guestPermissions()[collection][action] == true || (request.auth != null && userPermissions()[collection][action] == true)
+    }
+
+    function isCollectionPermittedProduction(collection, action) {
+      return guestPermissions()[collection].production[action] == true || (request.auth != null && userPermissions()[collection].production[action] == true)
+    }
+
+    function isSettingsPermitted(settings, action) {
+      return guestPermissions().settings[settings][action] == true || (request.auth != null && userPermissions().settings[settings][action] == true)
+    }
+          
+    match /fl_content/{document=**} {
+      allow read: if isContentPermitted(resource.data._fl_meta_.schema, 'view') ;
+      allow update: if isContentPermitted(request.resource.data._fl_meta_.schema, 'update');
+      allow create: if isContentPermitted(request.resource.data._fl_meta_.schema, 'create');
+      allow delete: if isContentPermitted(resource.data._fl_meta_.schema, 'delete');
+    }
+          
+    match /fl_environments/{document} {
+      allow read: if isSettingsPermitted('environments', 'view');
+      allow update: if isSettingsPermitted('environments', 'update');
+      allow create: if isSettingsPermitted('environments', 'create');
+      allow delete: if isSettingsPermitted('environments', 'delete');
+    }
+          
+    match /fl_files/{document=**} {
+      allow read: if isCollectionPermitted('media', 'view');
+      allow update: if isCollectionPermitted('media', 'update');
+      allow create: if isCollectionPermitted('media', 'create');
+      allow delete: if isCollectionPermitted('media', 'delete');
+    }    
+
+    match /fl_folders/{document=**} {
+      allow read: if isCollectionPermitted('media', 'view');
+      allow update: if isCollectionPermitted('media', 'update');
+      allow create: if isCollectionPermitted('media', 'create');
+      allow delete: if isCollectionPermitted('media', 'delete');
+    }    
+
+    match /fl_locales/{document=**} {
+      allow read: if isSettingsPermitted('locales', 'view');
+      allow update: if isSettingsPermitted('locales', 'update');
+      allow create: if isSettingsPermitted('locales', 'create');
+      allow delete: if isSettingsPermitted('locales', 'delete');
+    }   
+        
+    match /fl_navigation/{document=**} {
+      allow read: if isCollectionPermittedProduction('navigation', 'view');
+      allow update: if isCollectionPermittedProduction('navigation', 'update');
+      allow create: if isCollectionPermittedProduction('navigation', 'create');
+      allow delete: if isCollectionPermittedProduction('navigation', 'delete');
+    }
+          
+    match /fl_permissions/{document=**} {
+      allow read: if isCollectionPermitted('permissions', 'view');
+      allow update: if isCollectionPermitted('permissions', 'update');
+      allow create: if isCollectionPermitted('permissions', 'create');
+      allow delete: if isCollectionPermitted('permissions', 'delete');
+    }
+          
+    match /fl_schemas/{document=**} {
+      allow read: if isCollectionPermittedProduction('schemas', 'view');
+      allow update: if isCollectionPermittedProduction('schemas', 'update');
+      allow create: if isCollectionPermittedProduction('schemas', 'create');
+      allow delete: if isCollectionPermittedProduction('schemas', 'delete');
+    }    
+          
+    match /fl_settings/{document=**} {
+      allow read: if isSettingsPermitted('general', 'view');
+      allow update: if isSettingsPermitted('general', 'update');
+      allow create: if isSettingsPermitted('general', 'create');
+      allow delete: if isSettingsPermitted('general', 'delete');
+    }
+          
+    match /fl_users/{document=**} {
+      allow read: if request.auth.uid == resource.id || isCollectionPermitted('users', 'view');
+      allow update: if isSudo()
+      || (
+        request.auth.uid == resource.id
+        && (
+          get(request.resource.data.permissions).id == get(resource.data.permissions).id
+          || get(request.resource.data.permissions).id == '0'
+        )
+      )
+			|| (
+				request.auth.uid != resource.id
+				&& isCollectionPermitted('users', 'update')
+				&& (
+					get(resource.data.permissions).id == userPermissions().id ||
+					get(resource.data.permissions).id == '0'
+				)
+				&& (
+					get(request.resource.data.permissions).id == userPermissions().id ||
+					get(request.resource.data.permissions).id == '0'
+				)
+			)
+      allow create: if isCollectionPermitted('users', 'create') && get(request.resource.data.permissions).id == '0';
+      allow delete: if request.auth.uid == resource.id
+      || (
+      	isCollectionPermitted('users', 'delete')
+        && (
+      		get(request.resource.data.permissions).id == userPermissions().id ||
+					get(request.resource.data.permissions).id == '0' ||
+          isSudo()
+				)
+      );
+    }   
+          
+    match /fl_backups/{document=**} {
+      allow read: if isSettingsPermitted('backups', 'view');
+      allow update: if isSettingsPermitted('backups', 'update');
+      allow create: if isSettingsPermitted('backups', 'create');
+      allow delete: if isSettingsPermitted('backups', 'delete');
+    }
+          
+    match /fl_workflows/{document} {
+      allow read: if isSettingsPermitted('workflows', 'view');
+      allow update: if isSettingsPermitted('workflows', 'update');
+      allow create: if isSettingsPermitted('workflows', 'create');
+      allow delete: if isSettingsPermitted('workflows', 'delete');
+    }
+          
+    match /fl_webhooks/{document} {
+      allow read: if isCollectionPermitted('webhooks', 'view');
+      allow update: if isCollectionPermitted('webhooks', 'update');
+      allow create: if isCollectionPermitted('webhooks', 'create');
+      allow delete: if isCollectionPermitted('webhooks', 'delete');
+    }
+
+    match /fl_webhooks/{document}/activityLog/{log} {
+      allow read: if isCollectionPermitted('webhooks', 'view');
+      allow update: if isCollectionPermitted('webhooks', 'update');
+      allow create: if isCollectionPermitted('webhooks', 'create');
+      allow delete: if isCollectionPermitted('webhooks', 'delete');
+    }
+    
+
   }
 }
