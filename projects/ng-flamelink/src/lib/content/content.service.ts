@@ -69,7 +69,7 @@ export class FLContent {
 
         let data: any = single ? null : [];
         if (entries) {
-            data = single ? entries : Object.keys(entries).map(i => entries[i]);
+            data = single ? entries : Object.values(entries);
         }
 
         return data as T;

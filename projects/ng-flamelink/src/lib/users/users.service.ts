@@ -1,6 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
-import { FLExtend } from '../extend.service';
 import * as Users from '@flamelink/sdk-users-types';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
@@ -19,7 +18,6 @@ export class FLUsers {
     constructor(
         private zone: NgZone,
         private flamelink: FLApp,
-        private extend: FLExtend,
         public firestore: AngularFirestore,
         public auth: AngularFireAuth
     ) { }
@@ -34,51 +32,26 @@ export class FLUsers {
 
     public async add<T>(options: Users.CF.Add | Users.RTDB.Add) {
         const res: T = await this.flamelink.users.addToDB(options);
-        this.extend.log({
-            action: 'USERS.CREATE',
-            payload: options,
-            result: res
-        });
         return res;
     }
 
     public async get<T>(options?: Users.CF.Get | Users.RTDB.Get) {
         const res: T = await this.flamelink.users.get(options);
-        this.extend.log({
-            action: 'USERS.READ',
-            payload: options,
-            result: res
-        });
         return res;
     }
 
     public async getRaw<T>(options?: Users.CF.Get | Users.RTDB.Get) {
         const res: T = await this.flamelink.users.getRaw(options);
-        this.extend.log({
-            action: 'USERS.READ',
-            payload: options,
-            result: res
-        });
         return res;
     }
 
     public async update<T>(options: Users.CF.Update | Users.RTDB.Update) {
         const res: T = await this.flamelink.users.updateInDB(options);
-        this.extend.log({
-            action: 'USERS.UPDATE',
-            payload: options,
-            result: res
-        });
         return res;
     }
 
     public async removeFromDB(options: Users.CF.Remove | Users.RTDB.Remove) {
         const res = await this.flamelink.users.removeFromDB(options);
-        this.extend.log({
-            action: 'USERS.DELETE',
-            payload: options,
-            result: res
-        });
         return res;
     }
 
@@ -94,12 +67,6 @@ export class FLUsers {
                         }
                         this.zone.runTask(() => {
                             o.next(res);
-                            this.extend.log({
-                                action: 'USERS.READ',
-                                payload: options,
-                                result: res
-                            });
-
                         })
                     }
                 });
@@ -119,11 +86,6 @@ export class FLUsers {
                         }
                         this.zone.runTask(() => {
                             o.next(res);
-                            this.extend.log({
-                                action: 'USERS.READ',
-                                payload: options,
-                                result: res
-                            });
                         })
                     }
                 });

@@ -1,6 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Schemas from '@flamelink/sdk-schemas-types';
+import { Observable } from 'rxjs';
+
+interface SchemasSubscribe extends Schemas.CF.Get {
+    changeType?: string
+    // Removed mandatory callback from Content.CF.Subscribe
+}
+
 
 @Injectable({
     providedIn: 'root'
@@ -8,8 +15,24 @@ import * as Schemas from '@flamelink/sdk-schemas-types';
 export class FLSchemas {
 
     constructor(
+        private zone: NgZone,
         private flamelink: FLApp,
     ) { }
+
+    private objectToArray(entries: Record<string, Schemas.SchemaCf> | Schemas.SchemaCf, options: SchemasSubscribe) {
+        let single = !!options?.schemaKey;
+        let data: any = single ? null : [];
+        if (entries) {
+            data = single ? entries : Object.values(entries);
+        }
+
+        if (single) {
+            return data as Schemas.SchemaCf;
+        } else {
+            return data as Schemas.SchemaCf[];
+        }
+    }
+
 
     public ref(reference?: string) {
         return this.flamelink.schemas.ref(reference);
@@ -39,20 +62,85 @@ export class FLSchemas {
         return this.flamelink.schemas.remove(options);
     }
 
-    public subscribe(options?: Schemas.CF.Subscribe | Schemas.RTDB.Subscribe) {
-        return this.flamelink.schemas.subscribe(options);
+    public valueChanges(options?: SchemasSubscribe | Schemas.RTDB.Subscribe) {
+        return new Observable<Schemas.SchemaCf[] | Schemas.SchemaCf>(o => {
+            this.zone.runOutsideAngular(async () => {
+                this.flamelink.schemas.subscribe({
+                    ...options,
+                    callback: async (err, res: Record<string, Schemas.SchemaCf>) => {
+                        if (err) {
+                            o.error(err);
+                            return;
+                        }
+
+                        const data = this.objectToArray(res, options)
+                        this.zone.runTask(() => {
+                            o.next(data);
+                        })
+                    }
+                });
+            });
+        })
     }
 
-    public subscribeFields(options?: Schemas.CF.Subscribe | Schemas.RTDB.Subscribe) {
-        return this.flamelink.schemas.subscribeFields(options);
+    public valueChangesRaw(options?: SchemasSubscribe | Schemas.RTDB.Subscribe) {
+        return new Observable<Schemas.SchemaCf[] | Schemas.SchemaCf>(o => {
+            this.zone.runOutsideAngular(async () => {
+                this.flamelink.schemas.subscribeRaw({
+                    ...options,
+                    callback: async (err, res: Record<string, Schemas.SchemaCf>) => {
+                        if (err) {
+                            o.error(err);
+                            return;
+                        }
+
+                        const data = this.objectToArray(res, options)
+                        this.zone.runTask(() => {
+                            o.next(data);
+                        })
+                    }
+                });
+            });
+        })
     }
 
-    public subscribeRaw(options: Schemas.CF.Subscribe | Schemas.RTDB.Subscribe) {
-        return this.flamelink.schemas.subscribeRaw(options);
+    public valueChangesFields(options?: SchemasSubscribe | Schemas.RTDB.Subscribe) {
+        return new Observable<Schemas.SchemaCf[] | Schemas.SchemaCf>(o => {
+            this.zone.runOutsideAngular(async () => {
+                this.flamelink.schemas.subscribeFields({
+                    ...options,
+                    callback: async (err, res: Record<string, Schemas.SchemaCf>) => {
+                        if (err) {
+                            o.error(err);
+                            return;
+                        }
+
+                        const data = this.objectToArray(res, options)
+                        this.zone.runTask(() => {
+                            o.next(data);
+                        })
+                    }
+                });
+            });
+        })
     }
 
     public update(options: Schemas.CF.Update | Schemas.RTDB.Update) {
         return this.flamelink.schemas.update(options);
+    }
+
+    // Deprecated
+
+    public subscribe(options?: Schemas.CF.Subscribe | Schemas.RTDB.Subscribe) {
+        return this.flamelink.schemas.subscribe(options);
+    }
+
+    public subscribeRaw(options?: Schemas.CF.Subscribe | Schemas.RTDB.Subscribe) {
+        return this.flamelink.schemas.subscribeRaw(options);
+    }
+
+    public subscribeFields(options?: Schemas.CF.Subscribe | Schemas.RTDB.Subscribe) {
+        return this.flamelink.schemas.subscribeFields(options);
     }
 
 }
