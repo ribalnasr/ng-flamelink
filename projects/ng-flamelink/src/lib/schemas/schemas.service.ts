@@ -19,7 +19,7 @@ export class FLSchemas {
         private flamelink: FLApp,
     ) { }
 
-    private objectToArray(entries: Record<string, Schemas.SchemaCf> | Schemas.SchemaCf, options: SchemasSubscribe) {
+    private objectToArray<T>(entries: Record<string, Schemas.SchemaCf> | Schemas.SchemaCf, options: SchemasSubscribe) {
         let single = !!options?.schemaKey;
         let data: any = single ? null : [];
         if (entries) {
@@ -27,9 +27,9 @@ export class FLSchemas {
         }
 
         if (single) {
-            return data as Schemas.SchemaCf;
+            return data as T;
         } else {
-            return data as Schemas.SchemaCf[];
+            return data as T[];
         }
     }
 
@@ -73,7 +73,7 @@ export class FLSchemas {
                             return;
                         }
 
-                        const data = this.objectToArray(res, options)
+                        const data = this.objectToArray<Schemas.SchemaCf>(res, options)
                         this.zone.runTask(() => {
                             o.next(data);
                         })
@@ -94,7 +94,7 @@ export class FLSchemas {
                             return;
                         }
 
-                        const data = this.objectToArray(res, options)
+                        const data = this.objectToArray<Schemas.SchemaCf>(res, options)
                         this.zone.runTask(() => {
                             o.next(data);
                         })
@@ -105,7 +105,7 @@ export class FLSchemas {
     }
 
     public valueChangesFields(options?: SchemasSubscribe | Schemas.RTDB.Subscribe) {
-        return new Observable<Schemas.SchemaCf[] | Schemas.SchemaCf>(o => {
+        return new Observable<Schemas.SchemaField[] | Schemas.SchemaField>(o => {
             this.zone.runOutsideAngular(async () => {
                 this.flamelink.schemas.subscribeFields({
                     ...options,
@@ -115,7 +115,7 @@ export class FLSchemas {
                             return;
                         }
 
-                        const data = this.objectToArray(res, options)
+                        const data = this.objectToArray<Schemas.SchemaField>(res, options)
                         this.zone.runTask(() => {
                             o.next(data);
                         })
