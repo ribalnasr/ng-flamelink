@@ -21,6 +21,12 @@
       ],
       "ng-flamelink/*": [
         "projects/ng-flamelink/src/lib/*"
+      ],
+      "@fireplace/sdk": [
+        "projects/fireplace/sdk/src/public-api"
+      ],
+      "@fireplace/sdk/*": [
+        "projects/fireplace/sdk/src/lib/*"
       ]
     }
   },

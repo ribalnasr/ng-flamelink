@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FLContent, FLUsers, Document, FLSchemas } from 'ng-flamelink';
 import { tap } from 'rxjs/operators';
+import { Content } from '@fireplace/sdk/content'
 
 @Component({
   selector: 'app-root',
@@ -10,23 +11,23 @@ import { tap } from 'rxjs/operators';
 export class AppComponent {
   title = 'tests';
 
-  // public content = this.flContent.valueChanges({ schemaKey: 'articles' }).pipe(
-  //   tap(
-  //     res => console.log(res)
-  //   )
-  // );
+  public content = this.flContent.valueChanges({ schemaKey: 'articles' }).pipe(
+    tap(
+      res => console.log(res)
+    )
+  );
   constructor(
-    private flContent: FLContent,
+    private flContent: Content,
     private flSchemas: FLSchemas,
     private flUsers: FLUsers
   ) { }
 
-  // public delete(entryId: string) {
-  //   this.flContent.remove({
-  //     schemaKey: 'articles',
-  //     entryId
-  //   })
-  // }
+  public delete(entryId: string) {
+    //   this.flContent.remove({
+    //     schemaKey: 'articles',
+    //     entryId
+    //   })
+  }
 
   ngOnInit() {
 

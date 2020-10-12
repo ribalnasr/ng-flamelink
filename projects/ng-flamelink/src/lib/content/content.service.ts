@@ -44,7 +44,7 @@ export class FLContent {
 
     constructor(
         private zone: NgZone,
-        private flamelink: FLApp,
+        public flamelink: FLApp,
         private settings: FLSettings,
         public firestore: AngularFirestore,
         @Inject(PLATFORM_ID) private platformId: Object
