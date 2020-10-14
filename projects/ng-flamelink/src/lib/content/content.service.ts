@@ -1,7 +1,6 @@
-import { Injectable, NgZone, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, NgZone, Inject, PLATFORM_ID, Injector } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Content from '@flamelink/sdk-content-types';
-import * as App from '@flamelink/sdk-app-types';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Document } from './document.interface';
@@ -9,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { FLSettings } from '../settings/settings.service';
 import { switchMap } from 'rxjs/operators';
 
-interface ContentSubscribe extends Content.CF.Get {
+export interface ContentSubscribe extends Content.CF.Get {
     changeType?: string
     // Removed mandatory callback from Content.CF.Subscribe
 }
@@ -43,11 +42,12 @@ export class FLContent {
     public middlewares: ContentMiddlewares = {};
 
     constructor(
-        private zone: NgZone,
         public flamelink: FLApp,
-        private settings: FLSettings,
         public firestore: AngularFirestore,
-        @Inject(PLATFORM_ID) private platformId: Object
+        private zone: NgZone,
+        private settings: FLSettings,
+        @Inject(PLATFORM_ID) private platformId: Object,
+        public injector: Injector,
     ) { }
 
     public get isBrowser() {

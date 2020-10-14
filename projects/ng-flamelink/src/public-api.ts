@@ -4,6 +4,7 @@
 
 export * from './lib/flamelink.module';
 export * from './lib/app.service';
+export * from './lib/config.service';
 
 export * from './lib/content/content.service';
 export * from './lib/content/content.module';

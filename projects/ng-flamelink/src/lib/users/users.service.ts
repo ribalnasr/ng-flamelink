@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, Injector, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Users from '@flamelink/sdk-users-types';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -19,7 +19,8 @@ export class FLUsers {
         private zone: NgZone,
         private flamelink: FLApp,
         public firestore: AngularFirestore,
-        public auth: AngularFireAuth
+        public auth: AngularFireAuth,
+        public injector: Injector,
     ) { }
 
     public _getPermissionsRef(permission?: string) {

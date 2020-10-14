@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, Injector, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Settings from '@flamelink/sdk-settings-types';
 import { ReplaySubject } from 'rxjs';
@@ -13,6 +13,7 @@ export class FLSettings {
     constructor(
         private zone: NgZone,
         private flamelink: FLApp,
+        public injector: Injector
     ) {
         this.localeChanges.next()
     }
