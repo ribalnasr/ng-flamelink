@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Navigation from '@flamelink/sdk-navigation-types';
 
@@ -9,7 +9,6 @@ export class FLNavigation {
 
     constructor(
         private flamelink: FLApp,
-        public injector: Injector,
     ) { }
 
     public ref(reference?: string | string[]) {

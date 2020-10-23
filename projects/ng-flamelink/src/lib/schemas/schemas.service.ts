@@ -1,4 +1,4 @@
-import { Injectable, Injector, NgZone } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Schemas from '@flamelink/sdk-schemas-types';
 import { Observable } from 'rxjs';
@@ -17,7 +17,6 @@ export class FLSchemas {
     constructor(
         private zone: NgZone,
         private flamelink: FLApp,
-        public injector: Injector
     ) { }
 
     private objectToArray<T>(entries: Record<string, Schemas.SchemaCf> | Schemas.SchemaCf, options: SchemasSubscribe) {

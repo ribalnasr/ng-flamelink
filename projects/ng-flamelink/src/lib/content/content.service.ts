@@ -1,4 +1,4 @@
-import { Injectable, NgZone, Inject, PLATFORM_ID, Injector } from '@angular/core';
+import { Injectable, NgZone, Inject, PLATFORM_ID } from '@angular/core';
 import { FLApp } from '../app.service';
 import * as Content from '@flamelink/sdk-content-types';
 import { Observable } from 'rxjs';
@@ -47,7 +47,6 @@ export class FLContent {
         private zone: NgZone,
         private settings: FLSettings,
         @Inject(PLATFORM_ID) private platformId: Object,
-        public injector: Injector,
     ) { }
 
     public get isBrowser() {
