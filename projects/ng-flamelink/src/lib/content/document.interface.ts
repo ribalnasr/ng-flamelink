@@ -1,4 +1,5 @@
 import { DocumentReference } from '@angular/fire/firestore';
+import firebase from 'firebase';
 
 export interface DocumentMeta {
 	createdBy?: string;

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FLContent, FLUsers, Document, FLSchemas } from 'ng-flamelink';
 import { tap } from 'rxjs/operators';
-import { Content } from '@fireplace/sdk/content'
 
 @Component({
   selector: 'app-root',
@@ -17,7 +16,7 @@ export class AppComponent {
     )
   );
   constructor(
-    private flContent: Content,
+    private flContent: FLContent,
     private flSchemas: FLSchemas,
     private flUsers: FLUsers
   ) { }

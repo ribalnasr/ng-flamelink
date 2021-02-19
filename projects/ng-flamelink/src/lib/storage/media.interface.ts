@@ -1,4 +1,5 @@
 import { FileObject, ImageSize } from '@flamelink/sdk-storage-types';
+import firebase from 'firebase';
 
 export interface MediaMeta {
 	createdBy?: string;

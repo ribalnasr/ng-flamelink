@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { environment } from '../environments/environment';
-import { FireplaceModule } from '@fireplace/sdk';
+import { FlamelinkModule } from 'ng-flamelink';
 
 @NgModule({
   declarations: [
@@ -14,10 +14,14 @@ import { FireplaceModule } from '@fireplace/sdk';
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
-    FireplaceModule.initialize({
+    FlamelinkModule.initialize({
       firebaseApp: environment.firebase,
       dbType: 'cf'
     })
+    // FireplaceModule.initialize({
+    //   firebaseApp: environment.firebase,
+    //   dbType: 'cf'
+    // })
   ],
   providers: [],
   bootstrap: [AppComponent]
