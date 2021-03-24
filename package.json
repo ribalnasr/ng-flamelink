@@ -30,7 +30,7 @@
     "@angular/router": "~9.1.6",
     "@nguniversal/express-engine": "^9.1.1",
     "express": "^4.15.2",
-    "firebase": "^8.2.8",
+    "firebase": "^8.3.0",
     "flamelink": "^1.0.0-alpha.30",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
