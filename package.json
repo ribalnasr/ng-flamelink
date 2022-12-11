@@ -29,7 +29,7 @@
     "@angular/platform-server": "~9.1.6",
     "@angular/router": "~9.1.6",
     "@nguniversal/express-engine": "^9.1.1",
-    "express": "^4.15.2",
+    "express": "^4.17.3",
     "firebase": "^8.3.0",
     "flamelink": "^1.0.0-alpha.30",
     "rxjs": "~6.5.4",
